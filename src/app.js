@@ -17,10 +17,10 @@ app.get('/heroes/:id', (req, res) => {
   res.json(hero);
 });
 
-app.post('/heroes', (req, res) =>{
-    const {name, power} = req.body;
-    const hero = { id: nextId++, name, power};
-    heroes.push(hero);
+app.post('/heroes', (req, res) => {
+  const { name, power } = req.body;
+  const hero = { id: nextId++, name, power };
+  heroes.push(hero);
   res.status(201).json(hero);
 });
 
