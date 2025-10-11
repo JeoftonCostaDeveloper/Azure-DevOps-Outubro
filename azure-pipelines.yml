@@ -13,6 +13,8 @@ variables:
   - name: node_version
     value: '18.x'
   - group: RenderHooks   # precisa existir no Library (com RENDER_DEV_HOOK e RENDER_PROD_HOOK)
+  - name: system.debug
+  - value: true
 
 stages:
   - stage: Build
