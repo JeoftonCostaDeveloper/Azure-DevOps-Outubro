@@ -29,9 +29,7 @@ stages:
               versionSpec: $(node_version)
             displayName: 'Use Node $(node_version)'
           - script: npm ci
-            displayName: 'npm ci'
-          # - script: npm test
-          #   displayName: 'Run tests'
+            displayName: 'npm ci'          
           - script: npm run build
             displayName: 'Build (if any)'
           - publish: $(Build.ArtifactStagingDirectory)
@@ -53,7 +51,6 @@ stages:
               steps:
                 - script: |
                     echo "Triggering Render staging deploy..."
-                    # usa a variável secreta do variable group
                     curl -X POST "$(RENDER_DEV_HOOK)"
                   displayName: 'Trigger Render Staging Deploy'
 
