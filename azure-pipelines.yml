@@ -61,12 +61,12 @@ stages:
                       curl -k -X POST "%RENDER_DEV_HOOK%"
   - stage: Deploy_Prod
     displayName: 'Deploy to Production'
-    dependsOn: Deploy_Dev
+    dependsOn: Build
     condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
     jobs:
       - deployment: DeployProd
         displayName: 'Trigger Render Production'
-        environment: 'production'
+        environment: 'prod'
         pool:
           name: Default
         strategy:
