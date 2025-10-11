@@ -21,7 +21,7 @@ stages:
       - job: BuildJob
         displayName: 'Install / Test'
         pool:
-          vmImage: Dafault
+          vmImage: Default
         steps:
           - checkout: self
           - task: NodeTool@0
@@ -46,7 +46,7 @@ stages:
         displayName: 'Trigger Render Staging'
         environment: 'dev'
         pool:
-          vmImage: Dafault
+          vmImage: Default
         strategy:
           runOnce:
             deploy:
@@ -66,7 +66,7 @@ stages:
         displayName: 'Trigger Render Production'
         environment: 'production'   # aqui entra a aprovação configurada no portal (se houver)
         pool:
-          vmImage: Dafault
+          vmImage: Default
         strategy:
           runOnce:
             deploy:
