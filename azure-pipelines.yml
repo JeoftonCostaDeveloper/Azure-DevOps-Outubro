@@ -1,0 +1,85 @@
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+
+pr:
+  branches:
+    include:
+      - '*'
+
+variables:
+  - name: node_version
+    value: '18.x'
+  - group: RenderHooks   # precisa existir no Library (com RENDER_DEV_HOOK e RENDER_PROD_HOOK)
+
+stages:
+  - stage: Build
+    displayName: 'Build & Test'
+    jobs:
+      - job: BuildJob
+        displayName: 'Install / Test'
+        pool:
+          name: Default     # seu agente self-hosted
+        steps:
+          - checkout: self
+          - task: NodeTool@0
+            inputs:
+              versionSpec: $(node_version)
+            displayName: 'Use Node $(node_version)'
+          - script: npm ci
+            displayName: 'npm ci'          
+          - script: npm run build
+            displayName: 'Build (if any)'
+          - publish: $(Build.ArtifactStagingDirectory)
+            artifact: drop
+
+  - stage: Deploy_Dev
+    displayName: 'Deploy to Staging'
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'develop'))
+    jobs:
+      - deployment: DeployStaging
+        displayName: 'Trigger Render Staging'
+        environment: 'dev'
+        pool:
+          name: Default     # seu agente self-hosted
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: CmdLine@2
+                  displayName: 'Trigger Render Staging Deploy'
+                  inputs:
+                    script: |
+                      if "%RENDER_DEV_HOOK%"=="" (
+                      echo "ERROR: RENDER_DEV_HOOK is not set!"
+                          exit 1
+                      )
+                      echo Triggering Render staging deploy...
+                      curl -k -X POST "%RENDER_DEV_HOOK%"
+  - stage: Deploy_Prod
+    displayName: 'Deploy to Production'
+    dependsOn: Deploy_Dev
+    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
+    jobs:
+      - deployment: DeployProd
+        displayName: 'Trigger Render Production'
+        environment: 'production'
+        pool:
+          name: Default
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: CmdLine@2
+                  displayName: 'Trigger Render Production Deploy'
+                  inputs:
+                    script: |
+                      if "%RENDER_PROD_HOOK%"=="" (
+                      echo "ERROR: RENDER_PROD_HOOK is not set!"
+                          exit 1
+                      )
+                      echo Triggering Render production deploy...
+                      curl -k -X POST "%RENDER_PROD_HOOK%"
