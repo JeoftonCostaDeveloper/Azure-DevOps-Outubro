@@ -35,6 +35,14 @@ app.put('/heroes/:id', (req, res) => {
   res.status(200).json(hero);
 });
 
+app.delete('/heroes/:id', (req, res) => {
+  const index = heroes.findIndex(h => h.id === parseInt(req.params.id));
+  if (index === -1) return res.status(404).json({ error: 'Hero not found' });
+
+  const deleted = heroes.splice(index, 1);
+  res.json(deleted[0]);
+});
+
 app.get('/health', (req, res) => res.send('OK'));
 
 app.listen(port, () => {
