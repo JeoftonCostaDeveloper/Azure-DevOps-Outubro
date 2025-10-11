@@ -11,6 +11,12 @@ app.get('/heroes', (req, res) =>{
   res.json(heroes);
 });
 
+app.get('/heroes/:id', (req, res) => {
+  const hero = heroes.find(h => h.id === parseInt(req.params.id));
+  if (!hero) return res.status(404).json({ error: 'Hero not found' });
+  res.json(hero);
+});
+
 app.post('/heroes', (req, res) =>{
     const {name, power} = req.body;
     const hero = { id: nextId++, name, power};
