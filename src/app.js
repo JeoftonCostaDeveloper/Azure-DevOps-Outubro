@@ -24,6 +24,17 @@ app.post('/heroes', (req, res) => {
   res.status(201).json(hero);
 });
 
+app.put('/heroes/:id', (req, res) => {
+  const hero = heroes.find(h => h.id === parseInt(req.params.id));
+  if (!hero) return res.status(404).json({ error: 'Hero not found' });
+
+  const { name, power } = req.body;
+  hero.name = name ?? hero.name;
+  hero.power = power ?? hero.power;
+
+  res.status(200).json(hero);
+});
+
 app.get('/health', (req, res) => res.send('OK'));
 
 app.listen(port, () => {

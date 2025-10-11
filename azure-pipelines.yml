@@ -16,10 +16,10 @@ variables:
 
 stages:
   - stage: Build
-    displayName: 'Build & Test'
+    displayName: 'Build'
     jobs:
       - job: BuildJob
-        displayName: 'Install / Test'
+        displayName: 'Install'
         pool:
           name: Default     # seu agente self-hosted
         steps:
