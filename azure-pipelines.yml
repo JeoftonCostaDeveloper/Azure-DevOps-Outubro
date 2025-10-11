@@ -59,7 +59,7 @@ stages:
 
   - stage: Deploy_Prod
     displayName: 'Deploy to Production'
-    dependsOn: Deploy_Staging
+    dependsOn: Deploy_Dev
     condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
     jobs:
       - deployment: DeployProd
